@@ -1,0 +1,145 @@
+<%-include("partials/header"); -%>
+
+    <% function numberWithCommas(x) { %>
+        <% return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," ); %>
+            <%}%>
+
+                <div id="container" style="width:100%; height:400px;"></div>
+
+                <div class="container-fluid row">
+
+                    <div id="piechart" class="col-lg-4 col-sm-6 " style="width:30%; height:30%;"></div>
+
+
+                    <span class="past" id="pastCases">
+                        <%=pastCountryCases%>
+                    </span>
+                    <span class="past" id="pastRecovered">
+                        <%=pastCountryRecovered%>
+                    </span>
+                    <span class="past" id="pastDeaths">
+                        <%=pastCountryDeaths%>
+                    </span>
+                    <span class="past" id="date">
+                        <%=date%>
+                    </span>
+
+                    <!-- choosing according to spam num -->
+                    <span class="past numChoosing">
+                        <%=specifiedCountry.cases%>
+                    </span>
+                    <span class="past numChoosing">
+                        <%=specifiedCountry.deaths%>
+                    </span>
+                    <span class="past numChoosing">
+                        <%=specifiedCountry.recovered%>
+                    </span>
+                    <span class="past numChoosing">
+                        <%=specifiedCountry.active%>
+                    </span>
+                    <span class="past numChoosing">
+                        <%=specifiedCountry.critical%>
+                    </span>
+                    <script>
+                        // Country's Pie Chart
+                        Highcharts.chart('piechart', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: '<%=cntry%>'
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            accessibility: {
+                                point: {
+                                    valueSuffix: '%'
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    showInLegend: true
+                                }
+                            },
+                            series: [{
+                                name: 'Brands',
+                                colorByPoint: true,
+                                data: [
+                                    {
+                                        name: 'Cases',
+                                        y: parseInt($(".numChoosing")[0].innerHTML, 10),
+                                        color: "#5089C6"
+                                    }, {
+                                        name: 'Deaths',
+                                        y: parseInt($(".numChoosing")[1].innerHTML, 10),
+                                        color: "#FF4848"
+                                    }, {
+                                        name: 'Recovered',
+                                        y: parseInt($(".numChoosing")[2].innerHTML, 10),
+                                        color: "#368B85"
+                                    }, {
+                                        name: 'Active',
+                                        y: parseInt($(".numChoosing")[3].innerHTML, 10),
+                                        color: "#FFE459"
+                                    }, {
+                                        name: 'Critical',
+                                        y: parseInt($(".numChoosing")[4].innerHTML, 10),
+                                        color: "#DF711B"
+                                    }]
+                            }]
+                        });
+
+                    </script>
+
+                    <!-- <h3 class="commonInfo">Continent: <%=specifiedCountry.continent%></h3>
+<h3 class="commonInfo">Population: <%=numberWithCommas(specifiedCountry.population)%></h3> -->
+                    <div class="row col-8">
+                        <img src="<%=specifiedCountry.countryInfo.flag%>" class="singleCountryFlag" alt="">
+                        <div class="col-lg-6 col-sm-1 ">
+                            <h3 class="brd">Cases: <%= numberWithCommas(specifiedCountry.cases)%>
+                            </h3>
+                            <h3 class="brd">Cases Per Million: <%= numberWithCommas(specifiedCountry.casesPerOneMillion)
+                                    %>
+                            </h3>
+                            <h3 class="brd">Deaths: <%= numberWithCommas(specifiedCountry.deaths) %>
+                            </h3>
+                            <h3 class="brd">Deaths Per Million: <%=
+                                    numberWithCommas(specifiedCountry.deathsPerOneMillion) %>
+                            </h3>
+                            <h3 class="brd">Recovered: <%= numberWithCommas(specifiedCountry.recovered) %>
+                            </h3>
+                            <h3 class="brd">Recovered Per Million: <%=
+                                    numberWithCommas(specifiedCountry.recoveredPerOneMillion) %>
+                            </h3>
+                        </div>
+                        <div class="col-lg-6 col-sm-1">
+                            <h3 class="brd">Tests: <%= numberWithCommas(specifiedCountry.tests)%>
+                            </h3>
+                            <h3 class="brd">Tests Per Million: <%= numberWithCommas(specifiedCountry.testsPerOneMillion)
+                                    %>
+                            </h3>
+                            <h3 class="brd">Active: <%= numberWithCommas(specifiedCountry.active) %>
+                            </h3>
+                            <h3 class="brd">Active Per Million: <%=
+                                    numberWithCommas(specifiedCountry.activePerOneMillion) %>
+                            </h3>
+                            <h3 class="brd">Critical: <%= numberWithCommas(specifiedCountry.critical) %>
+                            </h3>
+                            <h3 class="brd">Critical Per Million: <%=
+                                    numberWithCommas(specifiedCountry.criticalPerOneMillion) %>
+                            </h3>
+                        </div>
+                    </div>
+
+                </div>
+
+                <%-include("partials/footer"); -%>

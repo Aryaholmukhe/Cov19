@@ -1,0 +1,246 @@
+<%-include("partials/header"); -%>
+
+
+    <!-- 
+            <h1 class="title">Name</h1> -->
+
+
+    <!-- seprate by commas function -->
+    <% function numberWithCommas(x) { %>
+        <% return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," ); %>
+            <%}%>
+
+
+                <div class="text-sm-start text-center position-sticky p-2 m-1">
+                    <p class="updated col">Updated at <%= time %> <em><ins><strong>(<%= timeAgo %>)</strong></ins></em>
+                    </p>
+                </div>
+                <div class="container-fluid row">
+                    <div class="col-lg-5 p-1">
+                        <div class="container-fluid overflow-hidden row justify-content-center m-1 pb-2">
+                            <div class="cases s col m-1 back">
+                                <div class="p-3">
+                                    <h4>cases</h4>
+                                </div>
+                                <div class="pt-2">
+                                    <h4>
+                                        <%= numberWithCommas(worldWide.cases) %>
+                                    </h4>
+                                </div>
+                                <div class="pt-1">
+                                    <h5>
+                                        +<%= numberWithCommas(worldWide.todayCases) %>
+                                    </h5>
+                                </div>
+                            </div>
+
+                            <div class="deaths s col m-1 back">
+                                <div class="p-3">
+                                    <h4>deaths</h4>
+                                </div>
+                                <div class="pt-2">
+                                    <h4>
+                                        <%= numberWithCommas(worldWide.deaths) %>
+                                    </h4>
+                                </div>
+                                <div class="pt-1">
+                                    <h4>
+                                        +<%= numberWithCommas(worldWide.todayDeaths) %>
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="recovered s col m-1 back">
+                                <div class="p-3">
+                                    <h4>recovered</h4>
+                                </div>
+                                <div class="pt-2">
+                                    <h4>
+                                        <%= numberWithCommas(worldWide.recovered) %>
+                                    </h4>
+                                </div>
+                                <div class="pt-1">
+                                    <h4>
+                                        +<%= numberWithCommas(worldWide.todayRecovered) %>
+                                    </h4>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <!-- graphs -->
+                        <span id="worldCases" class="past">
+                            <%=worldCases%>
+                        </span>
+                        <span id="worldDeaths" class="past">
+                            <%=worldDeaths%>
+                        </span>
+                        <span id="date" class="past">
+                            <%=date%>
+                        </span>
+
+                        <div class="row">
+                            <canvas id="firstChart" class="col-lg-12 col-sm-6"
+                                style="position: relative; height:30vh; width:30vw"></canvas>
+                            <canvas id="secondChart" class="col-lg-12 col-sm-6"
+                                style="position: relative; height:30vh; width:30vw"></canvas>
+                            <script>
+                                var ctx = document.getElementById('firstChart').getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: $('#date')[0].innerText.split(","),
+                                        datasets: [{
+                                            label: 'World Covid Cases',
+                                            data: $('#worldCases')[0].innerText.split(",").map(x => +x),
+                                            borderColor: '#171170'
+                                        }]
+                                    }, options: {
+                                        responsive: true
+                                    },
+                                    legend: {
+                                        display: true,
+                                        position: "bottom",
+                                        labels: {
+                                            boxWidth: 20
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('secondChart').getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: $('#date')[0].innerText.split(","),
+                                        datasets: [{
+                                            label: 'World Covid Cases',
+                                            data: $('#worldDeaths')[0].innerText.split(",").map(x => +x),
+                                            borderColor: '#171170'
+                                        }]
+                                    }
+                                });
+                            </script>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-lg-7">
+
+                        <div class="container position-relative">
+                            <span class="txt-type position-absolute p-2 pl-2" id="txt" data-wait="2000"
+                                data-words='["India", "Usa", "Brazil", "Russia", "France", "UK", "Turkey"]'></span>
+                            <input class="container-fluid p-1 mb-3 m-1" type="text" id="myInput" onkeyup="myFunction()">
+
+                            <script>
+                                // hiding text when clicked
+                                document.getElementById("myInput").addEventListener("focus", focusFunction, true);
+                                document.getElementById("myInput").addEventListener("blur", hideFunction, true);
+
+                                function focusFunction() {
+                                    document.getElementById("txt").classList.add("hide");
+                                }
+                                function hideFunction() {
+                                    document.getElementById("txt").classList.remove("hide");
+                                }
+                            </script>
+
+                        </div>
+
+                        <!-- Gets the data in the table by countrues or continents -->
+                        <!-- <button class="byCountry" onclick="country()">By Countries</button>
+                        <button onclick="continent()" class="byContinent">By Continents</button> -->
+
+
+
+                        <div class="table-container">
+                            <table class="table table-sm text-center" id="myTable">
+                                <thead>
+                                    <div class="tableHead">
+                                        <tr>
+
+                                            <th class="changeName">Country</th>
+                                            <th>Cases</th>
+                                            <th>Recovered</th>
+                                            <th>Deaths</th>
+                                            <th>Tests</th>
+                                            <th class="too-big">Cases per 1M</th>
+                                            <th class="too-big">Deaths per 1M</th>
+                                        </tr>
+                                    </div>
+                                </thead>
+                                <tbody>
+                                    <% countryAll.forEach((country)=>{%>
+                                        <tr>
+                                            <td class="country" id="cntry">
+                                                <a href="/data/<%=country.country%>">
+                                                    <p> <img src="<%=country.countryInfo.flag%>" style="width: 20px;"
+                                                            class="flag" alt=""> <br>
+                                                        <%=numberWithCommas(country.country)%>
+                                                    </p>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <p>
+                                                    <%= numberWithCommas(country.cases) %>
+                                                        <br>
+                                                        <% if( numberWithCommas(country.todayCases) !=0){%>
+                                                            <span class="todayNum" style="color: #2D46B9;">+<%=
+                                                                    numberWithCommas(country.todayCases) %></span>
+                                                            <% }%>
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p>
+                                                    <%= numberWithCommas(country.recovered) %>
+                                                        <br>
+                                                        <% if( numberWithCommas(country.todayRecovered) !=0){%>
+                                                            <span class="todayNum" style="color: #006A71;">+<%=
+                                                                    numberWithCommas(country.todayRecovered) %></span>
+                                                            <% }%>
+                                                </p>
+                                            </td>
+
+                                            <td>
+                                                <p>
+                                                    <%= numberWithCommas(country.deaths) %>
+                                                        <br>
+                                                        <% if( numberWithCommas(country.todayDeaths) !=0){%>
+                                                            <span class="todayNum" style="color: #CE1212;">+
+                                                                <%=numberWithCommas(country.todayDeaths) %>
+                                                            </span>
+                                                            <% }%>
+                                                </p>
+                                            </td>
+
+                                            <td>
+                                                <p>
+                                                    <%=numberWithCommas(country.tests)%>
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p>
+                                                    <%=numberWithCommas(country.casesPerOneMillion)%>
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p>
+                                                    <%=numberWithCommas(country.deathsPerOneMillion)%>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <%})%>
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+                <%-include("partials/footer"); -%>
