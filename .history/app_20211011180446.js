@@ -35,8 +35,7 @@ function numberWithCommas(x) {
 
 app.get("/data/:countryName", async (req, res) => {
 
-  let cntry = req
-  .params.countryName;
+  let cntry = req.params.countryName;
   const countries = await api.countries({ sort: 'cases' });
   const specifiedCountry = await api.countries({ country: cntry });
   console.log(cntry)
@@ -125,7 +124,10 @@ app.get("/about", (req, res) => {
   res.render("about")
 })
 
-let port = process.env.PORT || 8000; // Set default port to 8000 if process.env.PORT is undefined
+let port = process.env.PORT;
+ if(port===null||port===""){
+   port = 8000;
+ }
 app.listen(port, function() {
-  console.log(`server started on port ${port} successfully`);
+  console.log('server started on successfully');
 });

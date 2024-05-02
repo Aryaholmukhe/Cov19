@@ -125,7 +125,10 @@ app.get("/about", (req, res) => {
   res.render("about")
 })
 
-let port = process.env.PORT || 8000; // Set default port to 8000 if process.env.PORT is undefined
+let port = process.env.PORT;
+ if(port===null||port===""){
+   port = 8000;
+ }
 app.listen(port, function() {
-  console.log(`server started on port ${port} successfully`);
+  console.log('server started on successfully');
 });
